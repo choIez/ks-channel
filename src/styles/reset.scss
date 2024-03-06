@@ -1,0 +1,35 @@
+input,
+select,
+textarea {
+  font-family: inherit;
+  outline: none;
+  border: none;
+  background: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+body {
+  /* 改变浏览器 / element 默认的滚动条样式 */
+  .el-table__body-wrapper::-webkit-scrollbar-track-piece {
+    background-color: #f8f8f8;
+  }
+
+  .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    width: 6px;
+    height: 6px;
+    background-color: #dddddd;
+    border-radius: 100px;
+  }
+
+  .el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #bbb;
+  }
+}
