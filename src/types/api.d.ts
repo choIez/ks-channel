@@ -12,8 +12,7 @@ interface PageParams {
   page_size: number // 每页条数
 }
 
-// 分页请求参数
-// 另一个人写的
+// 分页请求参数, 另一个人写的
 interface NewPageParams {
   pageNumber: number // 当前页
   pageSize: number // 每页条数
@@ -30,8 +29,7 @@ interface PageResult<T = any> {
   list: T[]
 }
 
-// 分页数据
-// 另一个人写的
+// 分页数据, 另一个人写的
 interface NewPageResult<T = any> {
   list: T[]
   pageNum: number // 当前页

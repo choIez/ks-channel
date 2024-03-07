@@ -3,8 +3,8 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import router from "@/router"
 import sign from "@/utils/sign"
 import storage from "@/utils/storage"
-import { TOKEN, USER_INFO, RESPONSE_CODE } from "@/constants"
-import { isString } from "@/utils/typeOf"
+import { STORAGE_KEY, RESPONSE_CODE } from "@/constants"
+import { isString } from "@/utils/typeof"
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -50,8 +50,8 @@ service.interceptors.response.use(
           })
         }
         finally {
-          storage.del(TOKEN)
-          storage.del(USER_INFO)
+          storage.del(STORAGE_KEY.TOKEN)
+          storage.del(STORAGE_KEY.USER_INFO)
           
           await router.push({ path: "/login" })
         }

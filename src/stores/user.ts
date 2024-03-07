@@ -4,11 +4,11 @@ import { ElMessage } from "element-plus"
 import { apiLogin, apiUserInfo, apiUpdateUserInfo, apiLogout } from "@/api/user"
 import type { LoginParams, UserInfo, UpdateUserInfoParams } from "@/api/user/types"
 import storage from "@/utils/storage"
-import { TOKEN, USER_INFO, RESPONSE_CODE } from "@/constants"
+import { STORAGE_KEY, RESPONSE_CODE } from "@/constants"
 
-export const useUserInfoStore = defineStore("userInfo", () => {
+export const useUserInfoStore = defineStore("user", () => {
   // TOKEN
-  const userToken = ref<string>(storage.get(TOKEN))
+  const userToken = ref<string>(storage.get(STORAGE_KEY.TOKEN))
   
   // POSITION_TYPE  抖音: 1, 快手: 2
   const userType = ref<number>(0)
@@ -27,8 +27,8 @@ export const useUserInfoStore = defineStore("userInfo", () => {
       userToken.value = response.data.data.token
       userType.value = response.data.data.position_type
       
-      storage.set(TOKEN, userToken.value)
-      storage.set(USER_INFO, response.data.data)
+      storage.set(STORAGE_KEY.TOKEN, userToken.value)
+      storage.set(STORAGE_KEY.USER_INFO, response.data.data)
     }
   }
   
@@ -37,12 +37,7 @@ export const useUserInfoStore = defineStore("userInfo", () => {
     const response = await apiUserInfo()
     userInfo.value = response.data.data
     
-    const favicon: HTMLLinkElement = document.querySelector("#favicon")!
-    const { icon } = userInfo.value?.company
-    
-    if (favicon && icon) favicon.href = icon
-    
-    storage.set(USER_INFO, userInfo.value)
+    storage.set(STORAGE_KEY.USER_INFO, userInfo.value)
   }
   
   // 更新用户信息
@@ -50,7 +45,7 @@ export const useUserInfoStore = defineStore("userInfo", () => {
     const response = await apiUpdateUserInfo(data)
     userInfo.value = response.data.data
     
-    storage.set(USER_INFO, userInfo.value)
+    storage.set(STORAGE_KEY.USER_INFO, userInfo.value)
     
     ElMessage({
       message: "修改成功",
@@ -72,8 +67,8 @@ export const useUserInfoStore = defineStore("userInfo", () => {
     userType.value = 0
     userInfo.value = null
     
-    storage.del(TOKEN)
-    storage.del(USER_INFO)
+    storage.del(STORAGE_KEY.TOKEN)
+    storage.del(STORAGE_KEY.USER_INFO)
   }
   
   return { userToken, userType, userInfo, userLogin, getUserInfo, updateUserInfo, userLogout, userReset }

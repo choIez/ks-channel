@@ -1,7 +1,7 @@
 import { MD5 } from "crypto-js"
 import { storage } from "@/utils/storage"
-import { TOKEN, USER_INFO } from "@/constants"
-import { isUndefined, isArray, isFunction, isFormDate } from "@/utils/typeOf"
+import { STORAGE_KEY } from "@/constants"
+import { isUndefined, isArray, isFunction, isFormDate } from "@/utils/typeof"
 
 interface Options {
   baseURL?: string
@@ -11,10 +11,10 @@ interface Options {
   data?: any
 }
 
-const paramsSerializer = (params: Record<string, any>) => {
+const formatParams = (params: Record<string, any>) => {
   const result: string[] = []
   
-  const _params = Object.entries(params).reduce((prev: Record<string, any>, item: [string, any]) => {
+  const realParams = Object.entries(params).reduce((prev: Record<string, any>, item: [string, any]) => {
     const key = item[0]
     const val = item[1]
     
@@ -23,11 +23,11 @@ const paramsSerializer = (params: Record<string, any>) => {
     return prev
   }, {})
   
-  const _paramsKey: string[] = Object.keys(_params).sort()
+  const realKeys: string[] = Object.keys(realParams).sort()
   
-  const hasParams = _paramsKey && _paramsKey.length
+  const hasParams = realKeys && realKeys.length
   
-  for (const key of _paramsKey) {
+  for (const key of realKeys) {
     const value = params[key]
     
     if (value === null) continue
@@ -52,9 +52,9 @@ const paramsSerializer = (params: Record<string, any>) => {
 export const sign = (options?: Options) => {
   const { baseURL = "", url = "", params = {}, method, data = null } = options ?? {}
   
-  const Ds_Token = storage.get(TOKEN)
+  const Ds_Token = storage.get(STORAGE_KEY.TOKEN)
   
-  const userInfo = JSON.parse(storage.get(USER_INFO))
+  const userInfo = JSON.parse(storage.get(STORAGE_KEY.USER_INFO))
   const Ds_User_Id = userInfo.id
   
   const Ds_Time = new Date().getTime().toString().substring(0, 10)
@@ -63,7 +63,7 @@ export const sign = (options?: Options) => {
   
   const isJson = !isFormDate(data)
   
-  const searchParams = paramsSerializer(params)
+  const searchParams = formatParams(params)
   
   const uri = baseURL + url + searchParams
   

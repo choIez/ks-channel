@@ -1,5 +1,7 @@
-export const TOKEN = "TOKEN"
-export const USER_INFO = "USER_INFO"
+export const STORAGE_KEY = {
+  TOKEN: "TOKEN",
+  USER_INFO: "USER_INFO"
+}
 
 export const RESPONSE_CODE = {
   SUCCESS: 0,

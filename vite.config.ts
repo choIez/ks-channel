@@ -9,7 +9,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url))
-    }
+    },
+    extensions: [".js", ".ts", ".css", ".sass", ".scss"]
   },
   server: {
     host: "127.0.0.1"

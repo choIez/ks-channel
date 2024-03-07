@@ -2,7 +2,7 @@ import { storeToRefs } from "pinia"
 import { ElMessage } from "element-plus"
 import router from "@/router"
 import pinia from "@/stores"
-import { useUserInfoStore } from "@/stores/userInfo"
+import { useUserInfoStore } from "@/stores/user"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 
@@ -10,15 +10,15 @@ const userInfoStore = useUserInfoStore(pinia)
 const { userToken, userInfo } = storeToRefs(userInfoStore)
 const { getUserInfo, userReset } = userInfoStore
 
-const WHITE_LIST = ["/login"]
-const LIMIT_LIST = ["/team/invite-user", "/team/team-product", "/team/team-master"]
+export const whiteRoutes = ["login"]
+export const groupRoutes = ["invite-user", "team-product", "team-master"]
 
 router.beforeEach(async (to, _from, next) => {
   NProgress.start()
   
   // 有 Token
   if (userToken.value) {
-    if (to.path === "/login") {
+    if (to.name === "login") {
       next({ path: "/" })
       
       NProgress.done()
@@ -27,7 +27,7 @@ router.beforeEach(async (to, _from, next) => {
       // 用户信息有效
       if (userInfo.value?.username) {
         // 组长才能进的路由
-        if (LIMIT_LIST.includes(to.path) && userInfo.value.is_has_child !== 1) {
+        if (groupRoutes.includes(to.name as string) && userInfo.value.is_has_child !== 1) {
           // TODO 换成两套路由表 通过路由控制权限
           ElMessage({
             message: "无权限访问",
@@ -63,7 +63,7 @@ router.beforeEach(async (to, _from, next) => {
   }
   // 无 Token
   else {
-    if (WHITE_LIST.includes(to.path)) {
+    if (whiteRoutes.includes(to.name as string)) {
       next()
     }
     else {

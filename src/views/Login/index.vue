@@ -3,8 +3,9 @@
   import { ref, reactive, onMounted } from "vue"
   import { storeToRefs } from "pinia"
   import { ElMessageBox } from "element-plus"
+  import { useTitle } from "@vueuse/core"
   import { useRouter } from "vue-router"
-  import { useUserInfoStore } from "@/stores/userInfo"
+  import { useUserInfoStore } from "@/stores/user"
   import { useLogInfoStore } from "@/stores/logInfo"
   import type { LoginParams } from "@/api/user/types"
   import Icon from "@/components/Icon/index.vue"
@@ -20,6 +21,8 @@
   const { getLogInfo } = useLogInfoStore()
   
   onMounted(() => {
+    useTitle("快手渠道 - 登录")
+    
     if (import.meta.env.MODE === "development") {
       loginForm.username = "快手渠道测试003"
       loginForm.password = "111000..."
@@ -69,21 +72,17 @@
 </script>
 
 <template>
-  <div class="app-login flex-center">
+  <div class="root flex-center">
     <div class="mb-[148px]">
-      <div
-        class="text-[48px] text-[#333] font-bold text-center mb-[90px]"
-        :style="{ fontFamily: 'BDZongYi-A001' }"
-      >
-        快手-渠道后台管理系统
-      </div>
-      <div class="content">
-        <div class="w-[640px] pt-[75px] pr-[72px] pb-[66px] pl-[100px] box-border">
-          <div class="placeholder" />
+      <div class="title">快手-渠道后台管理系统</div>
+      <div class="main">
+        <!-- 背景 -->
+        <div class="background-container">
+          <div class="background" />
         </div>
-        <div class="w-[470px] px-[50px] py-[35px] box-border bg-white rounded-[6px]">
-          <div class="mt-[85px] mb-[30px] text-center text-[18px] text-[#333] font-bold">用户登录</div>
-          <el-form :model="loginForm" ref="loginFormRef" :rules="loginFormRules" size="default">
+        <div class="form-container">
+          <div class="form-title">用户登录</div>
+          <el-form :model="loginForm" ref="loginFormRef" :rules="loginFormRules">
             <el-form-item prop="username">
               <el-input
                 v-model.trim="loginForm.username"
@@ -118,27 +117,57 @@
 </template>
 
 <style scoped lang="scss">
-  .app-login {
+  .root {
     width: 100%;
     min-width: 1200px;
     height: 100vh;
     background: url('/images/login_bg.png') 0 0 no-repeat;
     background-size: cover;
-    overflow-x: scroll;
+  }
+  
+  .title {
+    margin-bottom: 90px;
+    font-size: 48px;
+    font-family: "BDZongYi-A001";
+    color: #333333;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .main {
+    display: flex;
+    width: 1110px;
+    height: 520px;
+    margin: 0 auto;
+    box-shadow: 0 7px 34px 1px #1212121a;
+    border-radius: 10px;
     
-    .content {
-      display: flex;
-      width: 1110px;
-      height: 520px;
-      margin: 0 auto;
-      box-shadow: 0 7px 34px 1px #1212121a;
-      border-radius: 10px;
+    .background-container {
+      width: 640px;
+      padding: 75px 72px 66px 100px;
+      box-sizing: border-box;
       
-      .placeholder {
+      .background {
         width: 468px;
         height: 379px;
         background: url('/images/login_icon.png') 0 0 no-repeat;
         background-size: 100%;
+      }
+    }
+    
+    .form-container {
+      width: 470px;
+      padding: 35px 50px;
+      box-sizing: border-box;
+      background-color: white;
+      border-radius: 6px;
+      
+      .form-title {
+        margin: 85px 0 30px;
+        text-align: center;
+        font-size: 18px;
+        color: #333333;
+        font-weight: bold;
       }
     }
   }

@@ -1,4 +1,4 @@
-import { isReference } from "@/utils/typeOf"
+import { isReference } from "@/utils/typeof"
 
 const Storage = class {
   get(key: string): string {
