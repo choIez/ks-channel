@@ -13,6 +13,7 @@ const app = createApp(App)
 app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
+
 injectIcons(app)
 
 app.mount("#app")

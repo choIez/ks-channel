@@ -21,7 +21,7 @@
   const { getLogInfo } = useLogInfoStore()
   
   onMounted(() => {
-    useTitle("快手渠道 - 登录")
+    useTitle("渠道 - 登录")
     
     if (import.meta.env.MODE === "development") {
       loginForm.username = "快手渠道测试003"
@@ -77,8 +77,8 @@
       <div class="title">快手-渠道后台管理系统</div>
       <div class="main">
         <!-- 背景 -->
-        <div class="background-container">
-          <div class="background" />
+        <div class="back-container">
+          <div class="back" />
         </div>
         <div class="form-container">
           <div class="form-title">用户登录</div>
@@ -142,12 +142,12 @@
     box-shadow: 0 7px 34px 1px #1212121a;
     border-radius: 10px;
     
-    .background-container {
+    .back-container {
       width: 640px;
       padding: 75px 72px 66px 100px;
       box-sizing: border-box;
       
-      .background {
+      .back {
         width: 468px;
         height: 379px;
         background: url('/images/login_icon.png') 0 0 no-repeat;

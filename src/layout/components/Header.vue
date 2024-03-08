@@ -1,11 +1,10 @@
 <script setup lang="ts">
-  import { ref, computed, onMounted } from "vue"
+  import { computed, onMounted } from "vue"
   import { storeToRefs } from "pinia"
   import { useRouter, useRoute, RouterLink } from "vue-router"
   import routes from "@/router/routes"
   import { useUserInfoStore } from "@/stores/user"
   import { groupRoutes } from "@/utils/auth"
-  import { TEXT_COLOR } from "@/constants/color"
   import Icon from "@/components/Icon/index.vue"
   
   defineOptions({ name: "Header" })
@@ -21,27 +20,25 @@
   
   })
   
-  const currentPath = computed(() => route.path)
+  const mode = "horizontal"
   
-  const navigations = computed(() => routes.map(route => {
-    return {
-      icon: route.meta.icon,
-      title: route.meta.title,
-      children: route.children.filter((child: RouteChildren) => {
-        if (groupRoutes.includes(child.name) && userInfo.value?.is_has_child !== 1) {
-          child.meta.hidden = true
-        }
-        else if (groupRoutes.includes(child.name) && userInfo.value?.is_has_child === 1) {
-          child.meta.hidden = false
-        }
-        
-        return !child.meta.hidden
-      }).map((child: RouteChildren) => ({
-        path: route.path + "/" + child.path,
-        title: child.meta.title
-      }))
-    }
-  }))
+  const activeIndex = computed(() => route.path)
+  
+  const navigations = computed(() => routes.map(route => ({
+    icon: route.meta.icon,
+    title: route.meta.title,
+    children: route.children
+      .filter(childRoute => !childRoute.meta.hidden)
+      // 非 邀请用户、团队数据、团队达人 或 组长权限
+      .filter(childRoute => !(groupRoutes.includes(childRoute.name) && userInfo.value?.is_has_child !== 1))
+      .map(childRoute => ({ path: route.path + "/" + childRoute.path, title: childRoute.meta.title }))
+  })))
+  
+  const logout = async () => {
+    await userLogout()
+    
+    router.push({ name: "login" })
+  }
 </script>
 
 <template>
@@ -59,10 +56,11 @@
         
         <!-- !! ellipsis 一定要设置为 false -->
         <el-menu
-          :default-active="currentPath"
-          :active-text-color="TEXT_COLOR.PRIMARY"
-          :text-color="TEXT_COLOR.DEFAULT"
-          mode="horizontal"
+          popper-class="menu"
+          :default-active="activeIndex"
+          active-text-color="#409eff"
+          text-color="#303133"
+          :mode
           :ellipsis="false"
           router
         >
@@ -80,7 +78,7 @@
               :key="subNavigation.path"
               :index="subNavigation.path"
             >
-              {{ subNavigation.title }}
+              <div>{{ subNavigation.title }}</div>
             </el-menu-item>
           </el-sub-menu>
         </el-menu>
@@ -90,7 +88,7 @@
             <template #reference>
               <div class="flex-center-pointer">
                 <el-avatar :src="userInfo?.avatar" />
-                <div class="mx-[6px] text-[16px] text-white font-normal">{{ userInfo?.nickname }}</div>
+                <div class="user-name">{{ userInfo?.nickname }}</div>
                 <Icon name="ArrowDown" :style="{ fontSize: '14px', color: '#fff' }" />
               </div>
             </template>
@@ -104,12 +102,12 @@
                 </div>
               </div>
               
-              <div class="recent-login">最近登录：{{ userInfo?.login_at }}</div>
+              <div class="login-info">最近登录：{{ userInfo?.login_at }}</div>
               <div class="flex flex-wrap">
                 <RouterLink class="user-button" to="/user-profile">个人资料</RouterLink>
                 <div class="user-button">修改密码</div>
                 <RouterLink class="user-button" to="/study-center">学习中心</RouterLink>
-                <div class="user-button danger">退出登录</div>
+                <div class="user-button danger" @click="logout">退出登录</div>
               </div>
             </div>
           </el-popover>
@@ -143,46 +141,8 @@
     margin: 0 auto;
   }
   
-  .share-button {
-    margin-top: 10px;
-    background-color: #7bbdff;
-    border: 1px solid transparent;
-    color: color.$white;
-  }
-  
-  .recent-login {
-    height: 40px;
-    line-height: 40px;
-    padding-left: 20px;
-    background-color: #337cc9;
-    font-size: 12px;
-    color: #fff;
-  }
-  
-  .user-button {
-    width: 50%;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    font-size: 14px;
-    color: #787878;
-    cursor: pointer;
-    text-decoration: none;
-    
-    &:hover {
-      background-color: #ecf5ff;
-      color: #50a6ff;
-    }
-    
-    &.danger {
-      color: #f56c6c;
-    }
-  }
-  
-  .flex-center-pointer {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  .menu :global(.el-menu--popup) {
+    min-width: 160px !important;
   }
   
   .el-menu.el-menu--horizontal {
@@ -227,7 +187,49 @@
   .el-menu-item:hover {
     outline: 0;
     color: #409eff !important;
-    background-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  .user-name {
+    margin: 0 6px;
+    font-size: 16px;
+    color: white;
+    font-weight: normal;
+  }
+  
+  .share-button {
+    margin-top: 10px;
+    background-color: #7bbdff;
+    border: 1px solid transparent;
+    color: color.$white;
+  }
+  
+  .login-info {
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #337cc9;
+    font-size: 12px;
+    color: #fff;
+  }
+  
+  .user-button {
+    width: 50%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 14px;
+    color: #787878;
+    cursor: pointer;
+    text-decoration: none;
+    
+    &:hover {
+      background-color: #ecf5ff;
+      color: #50a6ff;
+    }
+    
+    &.danger {
+      color: #f56c6c;
+    }
   }
   
   :deep(.el-button) {
@@ -240,5 +242,12 @@
   
   :deep(.el-dialog) {
     border-radius: 12px;
+  }
+  
+  .flex-center-pointer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
   }
 </style>

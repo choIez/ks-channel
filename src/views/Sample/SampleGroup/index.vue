@@ -1,12 +1,12 @@
-<!-- 邀请用户 -->
+<!-- 二级团列表 -->
 <script setup lang="ts">
   import { onMounted } from "vue"
   import { useTitle } from "@vueuse/core"
   
-  defineOptions({ name: "InviteUser" })
+  defineOptions({ name: "SampleGroup" })
   
   onMounted(() => {
-    useTitle("渠道 - 邀请用户")
+    useTitle("渠道 - 二级团列表")
   })
 </script>
 

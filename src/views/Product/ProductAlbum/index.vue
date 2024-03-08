@@ -1,12 +1,12 @@
-<!-- 邀请用户 -->
+<!-- 选品专辑 -->
 <script setup lang="ts">
   import { onMounted } from "vue"
   import { useTitle } from "@vueuse/core"
   
-  defineOptions({ name: "InviteUser" })
+  defineOptions({ name: "ProductAlbum" })
   
   onMounted(() => {
-    useTitle("渠道 - 邀请用户")
+    useTitle("渠道 - 选品专辑")
   })
 </script>
 

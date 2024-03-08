@@ -1,12 +1,12 @@
-<!-- 邀请用户 -->
+<!-- 团队数据 -->
 <script setup lang="ts">
   import { onMounted } from "vue"
   import { useTitle } from "@vueuse/core"
   
-  defineOptions({ name: "InviteUser" })
+  defineOptions({ name: "TeamData" })
   
   onMounted(() => {
-    useTitle("渠道 - 邀请用户")
+    useTitle("渠道 - 团队数据")
   })
 </script>
 

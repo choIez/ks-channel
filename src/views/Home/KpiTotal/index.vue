@@ -1,12 +1,12 @@
-<!-- 邀请用户 -->
+<!-- 绩效统计 -->
 <script setup lang="ts">
   import { onMounted } from "vue"
   import { useTitle } from "@vueuse/core"
   
-  defineOptions({ name: "InviteUser" })
+  defineOptions({ name: "KpiTotal" })
   
   onMounted(() => {
-    useTitle("渠道 - 邀请用户")
+    useTitle("渠道 - 绩效统计")
   })
 </script>
 

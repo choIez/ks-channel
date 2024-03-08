@@ -53,7 +53,7 @@ service.interceptors.response.use(
           storage.del(STORAGE_KEY.TOKEN)
           storage.del(STORAGE_KEY.USER_INFO)
           
-          await router.push({ path: "/login" })
+          router.push({ path: "/login" })
         }
       }
       else {

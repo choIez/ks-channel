@@ -6,7 +6,7 @@
   defineOptions({ name: "Workbench" })
   
   onMounted(() => {
-    useTitle("快手渠道 - 工作台")
+    useTitle("渠道 - 工作台")
   })
 </script>
 
