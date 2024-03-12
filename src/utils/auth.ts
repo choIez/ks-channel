@@ -1,24 +1,24 @@
 import { storeToRefs } from "pinia"
-import { ElMessage } from "element-plus"
 import router from "@/router"
 import pinia from "@/stores"
+import { addRoutes } from "@/router"
+import { leaderRoutes, memberRoutes, errorRoutes } from "@/router/routes"
 import { useUserInfoStore } from "@/stores/user"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 
 const userInfoStore = useUserInfoStore(pinia)
-const { userToken, userInfo } = storeToRefs(userInfoStore)
+const { userToken, userInfo, userRoutes } = storeToRefs(userInfoStore)
 const { getUserInfo, userReset } = userInfoStore
 
-export const whiteRoutes = ["login"]
-export const groupRoutes = ["invite-user", "team-product", "team-master"]
+const whiteRoutes = ["login"]
 
 router.beforeEach(async (to, _from, next) => {
   NProgress.start()
   
   // 有 Token
   if (userToken.value) {
-    if (to.name === "login") {
+    if (whiteRoutes.includes(<string>to.name)) {
       next({ path: "/" })
       
       NProgress.done()
@@ -26,20 +26,16 @@ router.beforeEach(async (to, _from, next) => {
     else {
       // 用户信息有效
       if (userInfo.value?.username) {
-        // 组长才能进的路由
-        if (groupRoutes.includes(to.name as string) && userInfo.value.is_has_child !== 1) {
-          // TODO 换成两套路由表 通过路由控制权限
-          ElMessage({
-            message: "无权限访问",
-            type: "error",
-            showClose: true
-          })
-          
-          next({ path: "/no-permission" })
-        }
-        // 通用路由
-        else {
+        if (router.getRoutes().find(route => route.name === "team")) {
           next()
+        }
+        else {
+          userRoutes.value = userInfo.value.is_has_child ? [...leaderRoutes] : [...memberRoutes]
+          
+          addRoutes([...userRoutes.value, ...errorRoutes])
+          
+          // addRoute 是异步的, 此时 next() 依然匹配不到路由, 需要重新进入当前路由
+          next({ ...to, replace: true })
         }
       }
       // 无用户信息
@@ -63,7 +59,7 @@ router.beforeEach(async (to, _from, next) => {
   }
   // 无 Token
   else {
-    if (whiteRoutes.includes(to.name as string)) {
+    if (whiteRoutes.includes(<string>to.name)) {
       next()
     }
     else {

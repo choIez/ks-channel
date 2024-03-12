@@ -1,9 +1,10 @@
 import axios, { type AxiosResponse } from "axios"
 import { ElMessage, ElMessageBox } from "element-plus"
 import router from "@/router"
+import pinia from "@/stores"
+import { useUserInfoStore } from "@/stores/user"
 import sign from "@/utils/sign"
-import storage from "@/utils/storage"
-import { STORAGE_KEY, RESPONSE_CODE } from "@/constants"
+import { RESPONSE_CODE } from "@/constants"
 import { isString } from "@/utils/typeof"
 
 const service = axios.create({
@@ -50,10 +51,10 @@ service.interceptors.response.use(
           })
         }
         finally {
-          storage.del(STORAGE_KEY.TOKEN)
-          storage.del(STORAGE_KEY.USER_INFO)
+          // 把 Pinia 和本地的都清掉, 只清本地会导致 Pinia 中还有数据, 无限请求 userInfo
+          useUserInfoStore(pinia).userReset()
           
-          router.push({ path: "/login" })
+          await router.push({ name: "login" })
         }
       }
       else {

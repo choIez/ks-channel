@@ -54,8 +54,9 @@ export const sign = (options?: Options) => {
   
   const Ds_Token = storage.get(STORAGE_KEY.TOKEN)
   
-  const userInfo = JSON.parse(storage.get(STORAGE_KEY.USER_INFO))
-  const Ds_User_Id = userInfo.id
+  const _userInfo = storage.get(STORAGE_KEY.USER_INFO)
+  const userInfo = _userInfo ? JSON.parse(_userInfo) : ""
+  const Ds_User_Id = _userInfo ? userInfo.id : ""
   
   const Ds_Time = new Date().getTime().toString().substring(0, 10)
   

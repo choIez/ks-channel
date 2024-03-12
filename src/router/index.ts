@@ -1,49 +1,17 @@
-import { createRouter, createWebHistory } from "vue-router"
-import routes from "./routes"
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
+import { staticRoutes, defaultRoutes } from "./routes"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/",
-      redirect: "/home",
-      component: () => import("@/layout/index.vue"),
-      children: [
-        {
-          path: "user-profile",
-          name: "user-profile",
-          component: () => import("@/views/User/UserProfile/index.vue")
-        },
-        {
-          path: "study-center",
-          name: "study-center",
-          component: () => import("@/views/User/StudyCenter/index.vue")
-        },
-        {
-          path: "article-detail",
-          name: "article-detail",
-          component: () => import("@/views/User/ArticleDetails/index.vue")
-        }
-      ]
-    },
-    
-    // 登录
-    {
-      path: "/login",
-      name: "login",
-      component: () => import("@/views/Login/index.vue")
-    },
-    
-    // 菜单
-    ...routes,
-    
-    // NotFound
-    {
-      path: "/:pathMatch(.*)*",
-      name: "NotFound",
-      component: () => import("@/views/NotFound/index.vue")
-    }
-  ]
+  routes: [...staticRoutes, ...defaultRoutes]
 })
+
+export const addRoutes = (routes: RouteRecordRaw[]) => {
+  routes.forEach(route => router.addRoute(route))
+}
+
+export const removeRoutes = (routes: RouteRecordRaw[]) => {
+  routes.forEach(route => router.removeRoute(route.name as string))
+}
 
 export default router

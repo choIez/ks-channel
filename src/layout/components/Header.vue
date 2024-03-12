@@ -2,9 +2,7 @@
   import { computed, onMounted } from "vue"
   import { storeToRefs } from "pinia"
   import { useRouter, useRoute, RouterLink } from "vue-router"
-  import routes from "@/router/routes"
   import { useUserInfoStore } from "@/stores/user"
-  import { groupRoutes } from "@/utils/auth"
   import Icon from "@/components/Icon/index.vue"
   
   defineOptions({ name: "Header" })
@@ -13,7 +11,7 @@
   const route = useRoute()
   
   const userInfoStore = useUserInfoStore()
-  const { userInfo } = storeToRefs(userInfoStore)
+  const { userInfo, menuRoutes } = storeToRefs(userInfoStore)
   const { userLogout } = userInfoStore
   
   onMounted(() => {
@@ -23,16 +21,6 @@
   const mode = "horizontal"
   
   const activeIndex = computed(() => route.path)
-  
-  const navigations = computed(() => routes.map(route => ({
-    icon: route.meta.icon,
-    title: route.meta.title,
-    children: route.children
-      .filter(childRoute => !childRoute.meta.hidden)
-      // 非 邀请用户、团队数据、团队达人 或 组长权限
-      .filter(childRoute => !(groupRoutes.includes(childRoute.name) && userInfo.value?.is_has_child !== 1))
-      .map(childRoute => ({ path: route.path + "/" + childRoute.path, title: childRoute.meta.title }))
-  })))
   
   const logout = async () => {
     await userLogout()
@@ -45,7 +33,7 @@
   <div>
     <div class="root">
       <div class="main">
-        <RouterLink class="flex-center-pointer" to="/">
+        <RouterLink class="flex-center-pointer" to="/" exact>
           <el-image
             class="flex-center-pointer h-[50px]"
             v-if="userInfo?.company.logo"
@@ -65,20 +53,20 @@
           router
         >
           <el-sub-menu
-            v-for="navigation in navigations"
-            :key="navigation.title"
-            :index="navigation.title"
+            v-for="route in menuRoutes"
+            :key="route.title"
+            :index="route.title"
           >
             <template #title>
-              <Icon :name="navigation.icon" />
-              <span class="menu-item-title">{{ navigation.title }}</span>
+              <Icon :name="route.icon" />
+              <span class="menu-item-title">{{ route.title }}</span>
             </template>
             <el-menu-item
-              v-for="subNavigation in navigation.children"
-              :key="subNavigation.path"
-              :index="subNavigation.path"
+              v-for="subRoute in route.children"
+              :key="subRoute.path"
+              :index="subRoute.path"
             >
-              <div>{{ subNavigation.title }}</div>
+              <div>{{ subRoute.title }}</div>
             </el-menu-item>
           </el-sub-menu>
         </el-menu>
@@ -104,9 +92,9 @@
               
               <div class="login-info">最近登录：{{ userInfo?.login_at }}</div>
               <div class="flex flex-wrap">
-                <RouterLink class="user-button" to="/user-profile">个人资料</RouterLink>
+                <RouterLink class="user-button" :to="{ name: 'user-profile' }" exact>个人资料</RouterLink>
                 <div class="user-button">修改密码</div>
-                <RouterLink class="user-button" to="/study-center">学习中心</RouterLink>
+                <RouterLink class="user-button" :to="{ name: 'study-center' }" exact>学习中心</RouterLink>
                 <div class="user-button danger" @click="logout">退出登录</div>
               </div>
             </div>

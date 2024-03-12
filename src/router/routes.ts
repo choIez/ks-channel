@@ -1,13 +1,56 @@
-const routes = [
+import type { RouteRecordRaw } from "vue-router"
+
+export const staticRoutes: RouteRecordRaw[] = [
+  // 默认首页
+  {
+    path: "/",
+    redirect: "/home"
+  },
+  
+  // 登录
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/Login/index.vue")
+  },
+  
+  // 用户中心
+  {
+    path: "/user",
+    name: "user",
+    redirect: "user-profile",
+    component: () => import("@/layout/index.vue"),
+    children: [
+      {
+        path: "user-profile",
+        name: "user-profile",
+        component: () => import("@/views/User/UserProfile/index.vue")
+      },
+      {
+        path: "study-center",
+        name: "study-center",
+        component: () => import("@/views/User/StudyCenter/index.vue")
+      },
+      {
+        path: "article-detail",
+        name: "article-detail",
+        component: () => import("@/views/User/ArticleDetails/index.vue")
+      }
+    ]
+  }
+]
+
+export const defaultRoutes: RouteRecordRaw[] = [
   // 首页
   {
     path: "/home",
+    name: "home",
     redirect: "/home/workbench",
+    component: () => import("@/layout/index.vue"),
     meta: {
       icon: "HomeFilled",
       title: "首页"
     },
-    component: () => import("@/layout/index.vue"),
     children: [
       {
         path: "workbench",
@@ -47,12 +90,13 @@ const routes = [
   // 达人管理
   {
     path: "/master",
+    name: "master",
     redirect: "/master/master-rank",
+    component: () => import("@/layout/index.vue"),
     meta: {
       icon: "Shop",
       title: "达人管理"
     },
-    component: () => import("@/layout/index.vue"),
     children: [
       {
         path: "master-rank",
@@ -76,12 +120,13 @@ const routes = [
   // 选品库
   {
     path: "/product",
+    name: "product",
     redirect: "/product/product-store",
+    component: () => import("@/layout/index.vue"),
     meta: {
       icon: "GoodsFilled",
       title: "商品管理"
     },
-    component: () => import("@/layout/index.vue"),
     children: [
       {
         path: "product-store",
@@ -138,12 +183,13 @@ const routes = [
   // 领样管理
   {
     path: "/sample",
+    name: "sample",
     redirect: "/sample/sample-order",
+    component: () => import("@/layout/index.vue"),
     meta: {
       icon: "List",
       title: "领样管理"
     },
-    component: () => import("@/layout/index.vue"),
     children: [
       {
         path: "sample-order",
@@ -162,17 +208,20 @@ const routes = [
         }
       }
     ]
-  },
-  
-  // 我的团队
+  }
+]
+
+export const leaderRoutes: RouteRecordRaw[] = [
+  // 我的团队 - 组长
   {
     path: "/team",
+    name: "team",
     redirect: "/team/team-data",
+    component: () => import("@/layout/index.vue"),
     meta: {
       icon: "UserFilled",
       title: "我的团队"
     },
-    component: () => import("@/layout/index.vue"),
     children: [
       {
         path: "invite-user",
@@ -210,4 +259,35 @@ const routes = [
   }
 ]
 
-export default routes
+export const memberRoutes: RouteRecordRaw[] = [
+  // 我的团队 - 普通成员
+  {
+    path: "/team",
+    name: "team",
+    redirect: "/team/team-data",
+    component: () => import("@/layout/index.vue"),
+    meta: {
+      icon: "UserFilled",
+      title: "我的团队"
+    },
+    children: [
+      {
+        path: "team-data",
+        name: "team-data",
+        component: () => import("@/views/Team/TeamData/index.vue"),
+        meta: {
+          title: "团队数据"
+        }
+      }
+    ]
+  }
+]
+
+export const errorRoutes: RouteRecordRaw[] = [
+  // NotFound
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/NotFound/index.vue")
+  }
+]

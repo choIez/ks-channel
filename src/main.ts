@@ -10,8 +10,8 @@ import "element-plus/dist/index.css"
 
 const app = createApp(App)
 
-app.use(pinia)
 app.use(router)
+app.use(pinia)
 app.use(ElementPlus)
 
 injectIcons(app)
